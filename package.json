@@ -3,10 +3,8 @@
   "version": "1.0.0",
   "main": "jsondata.js",
   "dependencies": {
-    "handlebars": "^4.7.6",
-    "jsdom": "^16.4.0",
-    "playwright": "^1.5.2",
-    "puppeteer": "^5.4.1",
+    "playwright-aws-lambda": "^0.6.0",
+    "playwright-core": "^1.6.2",
     "vercel": "^21.0.1"
   },
   "devDependencies": {},
