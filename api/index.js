@@ -32,6 +32,7 @@ module.exports = (req, res) => {
 
     await browser.close()
     process.exit(0)
+        return ;
   } catch (error) {
     console.log(error)
     await browser.close()
