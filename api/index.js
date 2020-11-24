@@ -1,43 +1,47 @@
-const { chromium } = require('playwright');
+const playwright = require('playwright-aws-lambda')
 
+const renderPdf = async (name) => {
+  var browser = null
 
-module.exports = (req, res) => {
-  const { name } = req.query;
+  browser = await playwright.launchChromium()
+  const context = await browser.newContext()
+  const page = await context.newPage()
 
- 
-  res.send(async function render(){
-      try {
-    browser = await chromium.launch({
-      args: [
-        '--no-sandbox',
-        '--ignore-certificate-errors'
-      ],
-      dumpio: true
-    })
+  await page.goto(`https://project1-65dnl1uco.vercel.app/main.html?name=${name}`)
+  await page.emulateMedia('screen')
+  const pdf = await page.pdf({
+    format: 'A4',
+    printBackground: true,
+    margin: {
+      top: '120px',
+      bottom: '50px',
+      right: '0px',
+      left: '0px'
+    }
+  })
 
-    const page = await browser.newPage()
-    await page.goto(`https://project1-65dnl1uco.vercel.app/main.html?name=${name}`)
-    await page.emulateMedia('screen')
-    await page.pdf({
-      format: 'A4',
-      displayHeaderFooter: true,
-      printBackground: true,
-      margin: {
-        top: '120px',
-        bottom: '50px',
-        right: '0px',
-        left: '0px',
-      }
-    })
+  return pdf
+}
 
-    await browser.close()
-    process.exit(0)
-        return ;
-  } catch (error) {
-    console.log(error)
-    await browser.close()
-    process.exit(1)
+export default async function handler (req, res) {
+  try {
+    const { name } = req.query
+
+    if (name === undefined) {
+      throw new Error('Name parapamter is missing')
+    }
+
+    const file = await renderPdf(name)
+    res.statusCode = 200
+
+    res.setHeader('Content-disposition', 'inline; filename=123.pdf')
+    res.setHeader('Content-Type', 'application/pdf')
+    res.setHeader('Cache-Control', 'no-cache')
+    res.end(file)
+  } catch (e) {
+    res.statusCode = 500
+    res.setHeader('Content-Type', 'text/html')
+    res.end(`<h1>Internal Error: </h1><p>${e}</p>`)
+    console.error(e)
   }
 }
-  
-  )}
