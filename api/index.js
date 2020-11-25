@@ -12,7 +12,7 @@ const renderPdf = async (name) => {
 //   var url=window.location.href
 //   const myURL = new URL('https://project1-two.vercel.app');
 //   const myURL = new URL('/main.html?name=${name}', 'https://project1-two.vercel.app');
-  const baseURL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"
+  const baseURL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/main.html?name=${name}` : "http://localhost:3000"
   await page.goto(baseURL)
   
   await page.emulateMedia('screen')
