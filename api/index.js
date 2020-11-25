@@ -1,7 +1,7 @@
 const playwright = require('playwright-aws-lambda');
 var url = require('url');
 
-const renderPdf = async (name,requrl) => {
+const renderPdf = async (name) => {
   var browser = null
 
   browser = await playwright.launchChromium()
@@ -10,7 +10,8 @@ const renderPdf = async (name,requrl) => {
 
 //   await page.goto(`https://project1-two.vercel.app/main.html?name=${name}`)
 //   var url=window.location.href
-  await page.goto(requrl)
+  const myURL = new URL('https://project1-two.vercel.app');
+  await page.goto(`myURL+"/main.html?name=${name}"`)
   
   await page.emulateMedia('screen')
   const pdf = await page.pdf({
@@ -30,18 +31,13 @@ const renderPdf = async (name,requrl) => {
 export default async function handler (req, res) {
   try {
     const { name } = req.query
-    
-    var requrl = url.format({
-    protocol: req.protocol,
-    host: req.get('host'),
-    pathname: req.originalUrl,
-});
+  
 
     if (name === undefined) {
       throw new Error('Name parapamter is missing')
     }
 
-    const file = await renderPdf(name,requrl)
+    const file = await renderPdf(name)
     res.statusCode = 200
 
     res.setHeader('Content-disposition', 'inline; filename=123.pdf')
