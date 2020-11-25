@@ -1,5 +1,4 @@
 const playwright = require('playwright-aws-lambda');
-var url = require('url');
 
 const renderPdf = async (name) => {
   var browser = null
@@ -8,10 +7,6 @@ const renderPdf = async (name) => {
   const context = await browser.newContext()
   const page = await context.newPage()
 
-//   await page.goto(`https://project1-two.vercel.app/main.html?name=${name}`)
-//   var url=window.location.href
-//   const myURL = new URL('https://project1-two.vercel.app');
-//   const myURL = new URL('/main.html?name=${name}', 'https://project1-two.vercel.app');
   const baseURL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/main.html?name=${name}` : "http://localhost:3000"
   await page.goto(baseURL)
   
